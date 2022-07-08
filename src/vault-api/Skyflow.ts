@@ -7,90 +7,90 @@ import { printLog } from './utils/logsHelper';
 import logs from './utils/logs';
 import Controller from './Controller';
 import {
-  IRevealResponseType,
-  IConnectionConfig,
-  RequestMethod,
-  IInsertRecordInput,
-  IDetokenizeInput,
-  IGetByIdInput,
-  RedactionType,
-  MessageType,
-  IDeleteByIdInput,
+    IRevealResponseType,
+    IConnectionConfig,
+    RequestMethod,
+    IInsertRecordInput,
+    IDetokenizeInput,
+    IGetByIdInput,
+    RedactionType,
+    MessageType,
+    IDeleteByIdInput,
 } from './utils/common';
 import { formatVaultURL } from './utils/helpers';
 
 export interface ISkyflow {
-  vaultID?: string;
-  vaultURL?: string;
-  getBearerToken: () => Promise<string>;
-  options?: Record<string, any>;
+    vaultID?: string;
+    vaultURL?: string;
+    getBearerToken: () => Promise<string>;
+    options?: Record<string, any>;
 }
 
 class Skyflow {
-  #client: Client;
-  #metadata = {};
-  #Controller: Controller;
+    #client: Client;
+    #metadata = {};
+    #Controller: Controller;
 
-  constructor(config: ISkyflow) {
-    this.#client = new Client(
-      {
-        ...config,
-      }
-      ,
-      this.#metadata,
-    );
-    this.#Controller = new Controller(this.#client);
+    constructor(config: ISkyflow) {
+        this.#client = new Client(
+            {
+                ...config,
+            }
+            ,
+            this.#metadata,
+        );
+        this.#Controller = new Controller(this.#client);
 
-    printLog(logs.infoLogs.BEARER_TOKEN_LISTENER, MessageType.LOG);
-  }
+        printLog(logs.infoLogs.BEARER_TOKEN_LISTENER, MessageType.LOG);
+    }
 
-  static init(config: ISkyflow): Skyflow {
-    printLog(logs.infoLogs.INITIALIZE_CLIENT, MessageType.LOG);
-    config.vaultURL = formatVaultURL(config.vaultURL)
-    const skyflow = new Skyflow(config);
-    printLog(logs.infoLogs.CLIENT_INITIALIZED, MessageType.LOG);
-    return skyflow;
-  }
+    static init(config: ISkyflow): Skyflow {
+        printLog(logs.infoLogs.INITIALIZE_CLIENT, MessageType.LOG);
+        config.vaultURL = formatVaultURL(config.vaultURL)
+        const skyflow = new Skyflow(config);
+        printLog(logs.infoLogs.CLIENT_INITIALIZED, MessageType.LOG);
+        return skyflow;
+    }
 
-  insert(
-    records: IInsertRecordInput,
-    options: Record<string, any> = { tokens: true },
-  ) {
-    printLog(logs.infoLogs.INSERT_TRIGGERED, MessageType.LOG);
-    return this.#Controller.insert(records, options);
-  }
+    insert(
+        records: IInsertRecordInput,
+        options: Record<string, any> = { tokens: true },
+    ) {
+        printLog(logs.infoLogs.INSERT_TRIGGERED, MessageType.LOG);
+        return this.#Controller.insert(records, options);
+    }
 
-  detokenize(detokenizeInput: IDetokenizeInput): Promise<IRevealResponseType> {
-    printLog(logs.infoLogs.DETOKENIZE_TRIGGERED,
-      MessageType.LOG);
-    return this.#Controller.detokenize(detokenizeInput);
-  }
+    detokenize(detokenizeInput: IDetokenizeInput): Promise<IRevealResponseType> {
+        printLog(logs.infoLogs.DETOKENIZE_TRIGGERED,
+            MessageType.LOG);
+        return this.#Controller.detokenize(detokenizeInput);
+    }
 
-  getById(getByIdInput: IGetByIdInput) {
-    printLog(logs.infoLogs.GET_BY_ID_TRIGGERED,
-      MessageType.LOG);
-    return this.#Controller.getById(getByIdInput);
-  }
+    getById(getByIdInput: IGetByIdInput) {
+        printLog(logs.infoLogs.GET_BY_ID_TRIGGERED,
+            MessageType.LOG);
+        return this.#Controller.getById(getByIdInput);
+    }
 
-  deleteById(deleteByIdInput: IDeleteByIdInput) {
-    printLog(logs.infoLogs.DELETE_BY_ID_TRIGGERED,
-      MessageType.LOG);
-    return this.#Controller.deleteById(deleteByIdInput);
-  }
+    deleteById(deleteByIdInput: IDeleteByIdInput) {
+        printLog(logs.infoLogs.DELETE_BY_ID_TRIGGERED,
+            MessageType.LOG);
+        return this.#Controller.deleteById(deleteByIdInput);
+    }
 
-  invokeConnection(config: IConnectionConfig) {
-    printLog(logs.infoLogs.INVOKE_CONNECTION_TRIGGERED,
-      MessageType.LOG);
+    invokeConnection(config: IConnectionConfig) {
+        printLog(logs.infoLogs.INVOKE_CONNECTION_TRIGGERED,
+            MessageType.LOG);
 
-    return this.#Controller.invokeConnection(config);
-  }
+        return this.#Controller.invokeConnection(config);
+    }
 
-  static get RedactionType() {
-    return RedactionType;
-  }
+    static get RedactionType() {
+        return RedactionType;
+    }
 
-  static get RequestMethod() {
-    return RequestMethod;
-  }
+    static get RequestMethod() {
+        return RequestMethod;
+    }
 }
 export default Skyflow;

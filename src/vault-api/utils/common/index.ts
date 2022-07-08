@@ -2,75 +2,75 @@
   Copyright (c) 2022 Skyflow, Inc. 
 */
 export enum RedactionType {
-  DEFAULT = 'DEFAULT',
-  PLAIN_TEXT = 'PLAIN_TEXT',
-  MASKED = 'MASKED',
-  REDACTED = 'REDACTED',
+    DEFAULT = 'DEFAULT',
+    PLAIN_TEXT = 'PLAIN_TEXT',
+    MASKED = 'MASKED',
+    REDACTED = 'REDACTED',
 }
 
 export enum RequestMethod {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  PATCH = 'PATCH',
-  DELETE = 'DELETE',
+    GET = 'GET',
+    POST = 'POST',
+    PUT = 'PUT',
+    PATCH = 'PATCH',
+    DELETE = 'DELETE',
 }
 
 export enum LogLevel {
-  WARN = 'WARN',
-  INFO = 'INFO',
-  DEBUG = 'DEBUG',
-  ERROR = 'ERROR',
-  OFF = 'OFF'
+    WARN = 'WARN',
+    INFO = 'INFO',
+    DEBUG = 'DEBUG',
+    ERROR = 'ERROR',
+    OFF = 'OFF'
 }
 
 
 export enum MessageType {
-  LOG = 'LOG',
-  WARN = 'WARN',
-  ERROR = 'ERROR',
+    LOG = 'LOG',
+    WARN = 'WARN',
+    ERROR = 'ERROR',
 }
 
 export interface IInsertRecordInput {
-  records: IInsertRecord[];
+    records: IInsertRecord[];
 }
 
 export interface IInsertRecord {
-  table: string;
-  fields: Record<string, any>;
+    table: string;
+    fields: Record<string, any>;
 }
 
 export interface IRevealRecord {
-  token: string;
-  redaction?: RedactionType;
+    token: string;
+    redaction?: RedactionType;
 }
 
 export interface IRevealResponseType {
-  records?: Record<string, string>[];
-  errors?: Record<string, any>[];
+    records?: Record<string, string>[];
+    errors?: Record<string, any>[];
 }
 
 export interface IDetokenizeInput {
-  records: IRevealRecord[];
+    records: IRevealRecord[];
 }
 
 export interface ISkyflowIdRecord {
-  ids: string[];
-  redaction: RedactionType;
-  table: string;
+    ids: string[];
+    redaction: RedactionType;
+    table: string;
 }
 
 export interface IGetByIdInput {
-  records: ISkyflowIdRecord[];
+    records: ISkyflowIdRecord[];
 }
 
 export interface ISkyflowIdRecordWithoutReveal {
-  ids: string[];
-  table: string;
+    ids: string[];
+    table: string;
 }
 
 export interface IDeleteByIdInput {
-  records: ISkyflowIdRecordWithoutReveal[];
+    records: ISkyflowIdRecordWithoutReveal[];
 }
 
 // export interface Context{
@@ -78,26 +78,26 @@ export interface IDeleteByIdInput {
 // }
 
 export interface IConnectionConfig {
-  connectionURL: string;
-  methodName: RequestMethod;
-  pathParams?: any;
-  queryParams?: any;
-  requestBody?: any;
-  requestHeader?: any;
+    connectionURL: string;
+    methodName: RequestMethod;
+    pathParams?: any;
+    queryParams?: any;
+    requestBody?: any;
+    requestHeader?: any;
 }
 
 export const TYPES = {
-  INSERT: 'INSERT',
-  DETOKENIZE: 'DETOKENIZE',
-  GET_BY_SKYFLOWID: 'GET_BY_SKYFLOWID',
-  DELETE_BY_SKYFLOWID: 'DELETE_BY_SKYFLOWID',
-  INVOKE_CONNECTION: 'INVOKE_CONNECTION',
+    INSERT: 'INSERT',
+    DETOKENIZE: 'DETOKENIZE',
+    GET_BY_SKYFLOWID: 'GET_BY_SKYFLOWID',
+    DELETE_BY_SKYFLOWID: 'DELETE_BY_SKYFLOWID',
+    INVOKE_CONNECTION: 'INVOKE_CONNECTION',
 };
 
 export enum ContentType {
-  APPLICATIONORJSON = 'application/json',
-  TEXTORPLAIN = 'text/plain',
-  TEXTORXML = 'text/xml',
-  FORMURLENCODED = 'application/x-www-form-urlencoded',
-  FORMDATA = 'multipart/form-data',
+    APPLICATIONORJSON = 'application/json',
+    TEXTORPLAIN = 'text/plain',
+    TEXTORXML = 'text/xml',
+    FORMURLENCODED = 'application/x-www-form-urlencoded',
+    FORMDATA = 'multipart/form-data',
 }
