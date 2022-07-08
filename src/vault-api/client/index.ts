@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2022 Skyflow, Inc. 
+  Copyright (c) 2022 Skyflow, Inc. 
 */
 import SkyflowError from '../libs/SkyflowError';
 import { ISkyflow } from '../Skyflow';
@@ -10,14 +10,14 @@ import {
 } from '../utils/logsHelper';
 import {
   ContentType,
-   MessageType
+  MessageType
 } from '../utils/common';
 import axios, { Method } from 'axios';
 import { objectToFormData, toLowerKeys } from '../utils/helpers';
 export interface IClientRequest {
   body?: any;
   headers?: Record<string, string>;
-  requestMethod:Method;
+  requestMethod: Method;
   url: string;
 }
 
@@ -30,44 +30,44 @@ class Client {
     this.config = config;
     this.#metaData = metadata;
   }
-  
-  convertRequestBody = (body:any,contentType:string) => {
+
+  convertRequestBody = (body: any, contentType: string) => {
     if (contentType?.includes(ContentType.FORMURLENCODED)) {
       const qs = require('qs');
       return qs.stringify(body)
     } else if (contentType?.includes(ContentType.FORMDATA)) {
       return objectToFormData(body);
     } else {
-      return JSON.stringify({ ...body})
+      return JSON.stringify({ ...body })
     }
   }
-  getHeaders = (data:any,headerKeys:any) =>{
-    if(headerKeys['content-type'] === "multipart/form-data") {
-      return {...headerKeys, ...data.getHeaders()}
+  getHeaders = (data: any, headerKeys: any) => {
+    if (headerKeys['content-type'] === "multipart/form-data") {
+      return { ...headerKeys, ...data.getHeaders() }
     } else {
-      return {...headerKeys}
+      return { ...headerKeys }
     }
   }
 
-  request = (request: IClientRequest) => new Promise((resolve, reject) => {
+  request = <T>(request: IClientRequest): Promise<T> => new Promise((resolve, reject) => {
     const headerKeys = toLowerKeys(request.headers);
     let contentType = headerKeys['content-type']
-    const data = this.convertRequestBody(request.body,contentType) 
-    const headers = this.getHeaders(data,headerKeys)
+    const data = this.convertRequestBody(request.body, contentType)
+    const headers = this.getHeaders(data, headerKeys)
     axios({
-      method : request.requestMethod,
+      method: request.requestMethod,
       url: request.url,
       data: data,
-      headers: this.getHeaders(data,headerKeys)
-      }
-    ).then((res)=> {
+      headers: this.getHeaders(data, headerKeys)
+    }
+    ).then((res) => {
       resolve(res.data)
-    }).catch((err)=> {
-        this.failureResponse(err).catch((err)=>reject(err))
+    }).catch((err) => {
+      this.failureResponse(err).catch((err) => reject(err))
     })
   });
 
-  failureResponse = (err:any) => new Promise((_,reject) => {
+  failureResponse = (err: any) => new Promise((_, reject) => {
     const contentType = err.response?.headers['content-type']
     const data = err.response.data
     console.log(data)
@@ -79,24 +79,24 @@ class Client {
       }
       printLog(description, MessageType.ERROR);
       reject(new SkyflowError({
-          code: err.response.status,
-          description,
-        }, [], true));
-      } else if (contentType && contentType.includes('text/plain')) {
-        let description = requestId ? `${data} - requestId: ${requestId}` : data
-        printLog(description, MessageType.ERROR);
-        reject(new SkyflowError({
-          code: err.response.status,
-          description,
-        }, [], true));
-      } else {
-        let description = requestId ? `${logs.errorLogs.ERROR_OCCURED} - requestId: ${requestId}` : logs.errorLogs.ERROR_OCCURED
-        printLog(description, MessageType.ERROR);
-        reject(new SkyflowError({
-          code: err.response.status,
-          description,
-        }, [], true));
-      }
+        code: err.response.status,
+        description,
+      }, [], true));
+    } else if (contentType && contentType.includes('text/plain')) {
+      let description = requestId ? `${data} - requestId: ${requestId}` : data
+      printLog(description, MessageType.ERROR);
+      reject(new SkyflowError({
+        code: err.response.status,
+        description,
+      }, [], true));
+    } else {
+      let description = requestId ? `${logs.errorLogs.ERROR_OCCURED} - requestId: ${requestId}` : logs.errorLogs.ERROR_OCCURED
+      printLog(description, MessageType.ERROR);
+      reject(new SkyflowError({
+        code: err.response.status,
+        description,
+      }, [], true));
+    }
   })
 }
 

@@ -1,10 +1,10 @@
 /*
-	Copyright (c) 2022 Skyflow, Inc. 
+  Copyright (c) 2022 Skyflow, Inc. 
 */
 import SkyflowError from '../../libs/SkyflowError';
 import { ISkyflow } from '../../Skyflow';
 import {
-  IInsertRecordInput, IDetokenizeInput, RedactionType, IGetByIdInput, IConnectionConfig, RequestMethod,
+  IInsertRecordInput, IDetokenizeInput, RedactionType, IGetByIdInput, IConnectionConfig, RequestMethod, IDeleteByIdInput,
 } from '../common';
 import SKYFLOW_ERROR_CODE from '../constants';
 
@@ -74,6 +74,36 @@ export const validateGetByIdInput = (getByIdInput: IGetByIdInput) => {
     if (!Object.values(RedactionType).includes(recordRedaction)) {
       throw new SkyflowError(SKYFLOW_ERROR_CODE.INVALID_REDACTION_TYPE);
     }
+
+    const recordTable = record.table;
+    if (!Object.prototype.hasOwnProperty.call(record, 'table')) { throw new SkyflowError(SKYFLOW_ERROR_CODE.MISSING_TABLE); }
+
+    if (recordTable === '' || typeof recordTable !== 'string') { throw new SkyflowError(SKYFLOW_ERROR_CODE.INVALID_RECORD_TABLE_VALUE); }
+  });
+};
+
+export const validateDeleteByIdInput = (deleteByIdInput: IDeleteByIdInput) => {
+  if (!Object.prototype.hasOwnProperty.call(deleteByIdInput, 'records')) {
+    throw new SkyflowError(SKYFLOW_ERROR_CODE.MISSING_RECORDS);
+  }
+  const { records } = deleteByIdInput;
+  if (records.length === 0) {
+    throw new SkyflowError(SKYFLOW_ERROR_CODE.EMPTY_RECORDS);
+  }
+
+  records.forEach((record) => {
+    if (Object.keys(record).length === 0) {
+      throw new SkyflowError(SKYFLOW_ERROR_CODE.EMPTY_RECORDS);
+    }
+
+    const recordIds = record.ids;
+    if (!recordIds) {
+      throw new SkyflowError(SKYFLOW_ERROR_CODE.MISSING_IDS);
+    }
+    if (recordIds.length === 0) throw new SkyflowError(SKYFLOW_ERROR_CODE.EMPTY_RECORD_IDS);
+    recordIds.forEach((skyflowId) => {
+      if (typeof skyflowId !== 'string') throw new SkyflowError(SKYFLOW_ERROR_CODE.INVALID_RECORD_ID_TYPE);
+    });
 
     const recordTable = record.table;
     if (!Object.prototype.hasOwnProperty.call(record, 'table')) { throw new SkyflowError(SKYFLOW_ERROR_CODE.MISSING_TABLE); }

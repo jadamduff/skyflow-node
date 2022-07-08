@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2022 Skyflow, Inc. 
+  Copyright (c) 2022 Skyflow, Inc. 
 */
 
 import Client from './client';
@@ -15,6 +15,7 @@ import {
   IGetByIdInput,
   RedactionType,
   MessageType,
+  IDeleteByIdInput,
 } from './utils/common';
 import { formatVaultURL } from './utils/helpers';
 
@@ -27,7 +28,7 @@ export interface ISkyflow {
 
 class Skyflow {
   #client: Client;
-  #metadata = { };
+  #metadata = {};
   #Controller: Controller;
 
   constructor(config: ISkyflow) {
@@ -69,6 +70,12 @@ class Skyflow {
     printLog(logs.infoLogs.GET_BY_ID_TRIGGERED,
       MessageType.LOG);
     return this.#Controller.getById(getByIdInput);
+  }
+
+  deleteById(deleteByIdInput: IDeleteByIdInput) {
+    printLog(logs.infoLogs.DELETE_BY_ID_TRIGGERED,
+      MessageType.LOG);
+    return this.#Controller.deleteById(deleteByIdInput);
   }
 
   invokeConnection(config: IConnectionConfig) {

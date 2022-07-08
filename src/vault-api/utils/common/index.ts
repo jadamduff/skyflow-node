@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2022 Skyflow, Inc. 
+  Copyright (c) 2022 Skyflow, Inc. 
 */
 export enum RedactionType {
   DEFAULT = 'DEFAULT',
@@ -16,7 +16,7 @@ export enum RequestMethod {
   DELETE = 'DELETE',
 }
 
-export enum LogLevel{
+export enum LogLevel {
   WARN = 'WARN',
   INFO = 'INFO',
   DEBUG = 'DEBUG',
@@ -25,7 +25,7 @@ export enum LogLevel{
 }
 
 
-export enum MessageType{
+export enum MessageType {
   LOG = 'LOG',
   WARN = 'WARN',
   ERROR = 'ERROR',
@@ -64,6 +64,15 @@ export interface IGetByIdInput {
   records: ISkyflowIdRecord[];
 }
 
+export interface ISkyflowIdRecordWithoutReveal {
+  ids: string[];
+  table: string;
+}
+
+export interface IDeleteByIdInput {
+  records: ISkyflowIdRecordWithoutReveal[];
+}
+
 // export interface Context{
 //   logLevel:LogLevel
 // }
@@ -81,6 +90,7 @@ export const TYPES = {
   INSERT: 'INSERT',
   DETOKENIZE: 'DETOKENIZE',
   GET_BY_SKYFLOWID: 'GET_BY_SKYFLOWID',
+  DELETE_BY_SKYFLOWID: 'DELETE_BY_SKYFLOWID',
   INVOKE_CONNECTION: 'INVOKE_CONNECTION',
 };
 

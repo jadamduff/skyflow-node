@@ -1,22 +1,22 @@
 /*
-	Copyright (c) 2022 Skyflow, Inc. 
+  Copyright (c) 2022 Skyflow, Inc. 
 */
 import Skyflow from '../../src/vault-api/Skyflow';
 import { LogLevel, RedactionType, RequestMethod } from '../../src/vault-api/utils/common';
-import { isValidURL} from '../../src/vault-api/utils/validators';
+import { isValidURL } from '../../src/vault-api/utils/validators';
 import clientModule from '../../src/vault-api/client';
 import { setLogLevel } from '../../src/vault-api/Logging';
-jest.mock('../../src/vault-api/utils/jwtUtils',()=>({
+jest.mock('../../src/vault-api/utils/jwtUtils', () => ({
   __esModule: true,
-  isTokenValid:jest.fn(()=>true),
+  isTokenValid: jest.fn(() => true),
 }));
 jest.mock('../../src/vault-api/client');
 const skyflowConfig = {
   vaultID: '<VaultID>',
   vaultURL: 'https://www.vaulturl.com',
-  getBearerToken: ()=>{
-    return new Promise((resolve,_)=>{
-        resolve("token")
+  getBearerToken: () => {
+    return new Promise((resolve, _) => {
+      resolve("token")
     })
   },
 };
@@ -26,7 +26,7 @@ const clientData = {
     config: { ...skyflowConfig },
     metadata: {},
   },
-  context: { logLevel: LogLevel.ERROR}
+  context: { logLevel: LogLevel.ERROR }
 }
 describe('Skyflow initialization', () => {
   test('should initialize the skyflow object  ', () => {
@@ -119,8 +119,8 @@ const records = {
         card_number: "411111111111111",
         fullname: "san",
         expiry_date: "11/22",
-    },
-    table: "cards",
+      },
+      table: "cards",
     }],
 };
 
@@ -128,8 +128,8 @@ const options = {
   tokens: true,
 };
 
-const insertResponse = {"vaultID":"<VaultID>","responses":[{"records":[{"skyflow_id":"id"}]},{"fields":{"card_number":"token","cvv":"token","expiry_date":"token","fullname":"token"}}]}
-const insertResponseWithoutTokens = {"vaultID":"<VaultID>","responses":[{"records":[{"skyflow_id":"id"}]}]}
+const insertResponse = { "vaultID": "<VaultID>", "responses": [{ "records": [{ "skyflow_id": "id" }] }, { "fields": { "card_number": "token", "cvv": "token", "expiry_date": "token", "fullname": "token" } }] }
+const insertResponseWithoutTokens = { "vaultID": "<VaultID>", "responses": [{ "records": [{ "skyflow_id": "id" }] }] }
 const on = jest.fn();
 
 describe('skyflow insert', () => {
@@ -139,19 +139,19 @@ describe('skyflow insert', () => {
     skyflow = Skyflow.init({
       vaultID: '<VaultID>',
       vaultURL: 'https://www.vaulturl.com',
-      getBearerToken: ()=>{
-        return new Promise((resolve,_)=>{
-            resolve("token")
+      getBearerToken: () => {
+        return new Promise((resolve, _) => {
+          resolve("token")
         })
       }
     });
 
-   
+
   });
 
   test('insert invalid input', (done) => {
     try {
-      const res = skyflow.insert({"records":[]});
+      const res = skyflow.insert({ "records": [] });
       let error;
       res.catch((err) => error = err);
 
@@ -164,67 +164,67 @@ describe('skyflow insert', () => {
   });
 
   test('insert success with valid token', () => {
-    jest.mock('../../src/vault-api/utils/jwtUtils',()=>({
+    jest.mock('../../src/vault-api/utils/jwtUtils', () => ({
       __esModule: true,
-      isTokenValid:jest.fn(()=>true),
+      isTokenValid: jest.fn(() => true),
     }));
     const clientReq = jest.fn(() => Promise.resolve(insertResponse));
     const mockClient = {
       config: skyflowConfig,
       request: clientReq,
-      metadata:{}
+      metadata: {}
     }
     setLogLevel(LogLevel.WARN)
-    clientModule.mockImplementation(() => {return mockClient});
+    clientModule.mockImplementation(() => { return mockClient });
 
     skyflow = Skyflow.init({
-        vaultID: '<VaultID>',
-        vaultURL: 'https://www.vaulturl.com',
-        getBearerToken: ()=>{
-          return new Promise((resolve,_)=>{
-              console.log("xxxx")
-              resolve("token")
-          })
-        }
-      });    
-      const res = skyflow.insert(records);
-      
-      return res.then((res) => {
-        expect(clientReq).toHaveBeenCalled();
-        expect(res.records.length).toBe(1);
-        expect(res.error).toBeUndefined(); 
-      });
-    
+      vaultID: '<VaultID>',
+      vaultURL: 'https://www.vaulturl.com',
+      getBearerToken: () => {
+        return new Promise((resolve, _) => {
+          console.log("xxxx")
+          resolve("token")
+        })
+      }
+    });
+    const res = skyflow.insert(records);
+
+    return res.then((res) => {
+      expect(clientReq).toHaveBeenCalled();
+      expect(res.records.length).toBe(1);
+      expect(res.error).toBeUndefined();
+    });
+
   });
 
 
   test('insert success without tokens', () => {
 
-  
+
     const clientReq = jest.fn(() => Promise.resolve(insertResponseWithoutTokens));
     const mockClient = {
       config: skyflowConfig,
       request: clientReq,
-      metadata:{}
+      metadata: {}
     }
     setLogLevel(LogLevel.WARN)
-    clientModule.mockImplementation(() => {return mockClient});
-      skyflow = Skyflow.init({
-        vaultID: '<VaultID>',
-        vaultURL: 'https://www.vaulturl.com',
-        getBearerToken: ()=>{
-          return new Promise((resolve,_)=>{
-              resolve("token")
-          })
-        }
-      });    
-      const res = skyflow.insert(records,{tokens:false});
-      return res.then((res) => {
-        expect(clientReq).toHaveBeenCalled();
-        expect(res.records.length).toBe(1);
-        expect(res.error).toBeUndefined(); 
-      });
-    
+    clientModule.mockImplementation(() => { return mockClient });
+    skyflow = Skyflow.init({
+      vaultID: '<VaultID>',
+      vaultURL: 'https://www.vaulturl.com',
+      getBearerToken: () => {
+        return new Promise((resolve, _) => {
+          resolve("token")
+        })
+      }
+    });
+    const res = skyflow.insert(records, { tokens: false });
+    return res.then((res) => {
+      expect(clientReq).toHaveBeenCalled();
+      expect(res.records.length).toBe(1);
+      expect(res.error).toBeUndefined();
+    });
+
   });
 
   test('insert error', (done) => {
@@ -234,20 +234,20 @@ describe('skyflow insert', () => {
       const mockClient = {
         config: skyflowConfig,
         request: clientReq,
-        metadata:{}
+        metadata: {}
       }
       setLogLevel(LogLevel.INFO)
-      clientModule.mockImplementation(() => {return mockClient});
-        skyflow = Skyflow.init({
-          vaultID: '<VaultID>',
-          vaultURL: 'https://www.vaulturl.com',
-          getBearerToken: ()=>{
-            return new Promise((resolve,_)=>{
-                resolve("token")
-            })
-          }
-        });
-      const res = skyflow.insert(records,{tokens:false});
+      clientModule.mockImplementation(() => { return mockClient });
+      skyflow = Skyflow.init({
+        vaultID: '<VaultID>',
+        vaultURL: 'https://www.vaulturl.com',
+        getBearerToken: () => {
+          return new Promise((resolve, _) => {
+            resolve("token")
+          })
+        }
+      });
+      const res = skyflow.insert(records, { tokens: false });
       let error;
       res.catch((err) => error = err);
 
@@ -299,7 +299,7 @@ const detokenizeRes = {
 const invalidTokenDetokenizeResponse = { error: { message: "token doesn't exist", code: 404 } }
 
 describe('skyflow detokenize', () => {
- 
+
   let skyflow;
   beforeEach(() => {
     skyflow = Skyflow.init({
@@ -312,27 +312,27 @@ describe('skyflow detokenize', () => {
   test('detokenize success with valid bearer token', (done) => {
     try {
 
-      jest.mock('../../src/vault-api/utils/jwtUtils',()=>({
+      jest.mock('../../src/vault-api/utils/jwtUtils', () => ({
         __esModule: true,
-        isTokenValid:jest.fn(()=>true),
+        isTokenValid: jest.fn(() => true),
       }));
       const clientReq = jest.fn(() => Promise.resolve(detokenizeRes));
       const mockClient = {
         config: skyflowConfig,
         request: clientReq,
-        metadata:{}
+        metadata: {}
       }
       setLogLevel(LogLevel.ERROR)
-      clientModule.mockImplementation(() => {return mockClient});
-        skyflow = Skyflow.init({
-          vaultID: '<VaultID>',
-          vaultURL: 'https://www.vaulturl.com',
-          getBearerToken: ()=>{
-            return new Promise((resolve,_)=>{
-                resolve("token")
-            })
-          }
-        });
+      clientModule.mockImplementation(() => { return mockClient });
+      skyflow = Skyflow.init({
+        vaultID: '<VaultID>',
+        vaultURL: 'https://www.vaulturl.com',
+        getBearerToken: () => {
+          return new Promise((resolve, _) => {
+            resolve("token")
+          })
+        }
+      });
       const res = skyflow.detokenize(detokenizeInput);
       let data;
       res.then((res) => data = res);
@@ -348,26 +348,26 @@ describe('skyflow detokenize', () => {
 
 
   test('detokenize error', (done) => {
-    
+
     try {
-      
+
       const clientReq = jest.fn(() => Promise.reject(invalidTokenDetokenizeResponse));
       const mockClient = {
         config: skyflowConfig,
         request: clientReq,
-        metadata:{}
+        metadata: {}
       }
       setLogLevel(LogLevel.DEBUG)
-      clientModule.mockImplementation(() => {return mockClient});
-        skyflow = Skyflow.init({
-          vaultID: '<VaultID>',
-          vaultURL: 'https://www.vaulturl.com',
-          getBearerToken: ()=>{
-            return new Promise((resolve,_)=>{
-                resolve("token")
-            })
-          }
-        });
+      clientModule.mockImplementation(() => { return mockClient });
+      skyflow = Skyflow.init({
+        vaultID: '<VaultID>',
+        vaultURL: 'https://www.vaulturl.com',
+        getBearerToken: () => {
+          return new Promise((resolve, _) => {
+            resolve("token")
+          })
+        }
+      });
       const res = skyflow.detokenize(detokenizeInput);
       let error;
       res.catch((err) => error = err);
@@ -380,58 +380,58 @@ describe('skyflow detokenize', () => {
     }
   });
 
-  test('detokenize invalid input 1',()=>{
+  test('detokenize invalid input 1', () => {
     try {
-      
+
       const res = skyflow.detokenize(invalidDetokenizeInput);
-        res.catch((err)=>{
-          expect(err).toBeDefined();
-        })
-    }catch(err){
+      res.catch((err) => {
+        expect(err).toBeDefined();
+      })
+    } catch (err) {
     }
   });
 
-  test('detokenize invalid input 2',()=>{
+  test('detokenize invalid input 2', () => {
     try {
-      
+
       const res = skyflow.detokenize({});
-        res.catch((err)=>{
-          expect(err).toBeDefined();
-        })
-    }catch(err){
+      res.catch((err) => {
+        expect(err).toBeDefined();
+      })
+    } catch (err) {
     }
   });
 
-  test('detokenize invalid input 3',()=>{
+  test('detokenize invalid input 3', () => {
     try {
-      
+
       const res = skyflow.detokenize(invalidDetokenizeInputEmptyRecords);
-        res.catch((err)=>{
-          expect(err).toBeDefined();
-        })
-    }catch(err){
+      res.catch((err) => {
+        expect(err).toBeDefined();
+      })
+    } catch (err) {
     }
   });
 
-  test('detokenize invalid input 4',()=>{
+  test('detokenize invalid input 4', () => {
     try {
-      
+
       const res = skyflow.detokenize(invalidDetokenizeInputEmptyToken);
-        res.catch((err)=>{
-          expect(err).toBeDefined();
-        })
-    }catch(err){
+      res.catch((err) => {
+        expect(err).toBeDefined();
+      })
+    } catch (err) {
     }
   });
 
-  test('detokenize invalid input 5',()=>{
+  test('detokenize invalid input 5', () => {
     try {
-      
+
       const res = skyflow.detokenize(invalidDetokenizeInputEmptyRecordObject);
-        res.catch((err)=>{
-          expect(err).toBeDefined();
-        })
-    }catch(err){
+      res.catch((err) => {
+        expect(err).toBeDefined();
+      })
+    } catch (err) {
     }
   });
 });
@@ -486,26 +486,26 @@ describe('skyflow getById', () => {
 
   test('getById success with valid bearer token', (done) => {
     try {
-      jest.mock('../../src/vault-api/utils/jwtUtils',()=>({
+      jest.mock('../../src/vault-api/utils/jwtUtils', () => ({
         __esModule: true,
-        isTokenValid:jest.fn(()=>true),
+        isTokenValid: jest.fn(() => true),
       }));
       const clientReq = jest.fn(() => Promise.resolve(getByIdRes));
       const mockClient = {
         config: skyflowConfig,
         request: clientReq,
-        metadata:{}
+        metadata: {}
       }
-      clientModule.mockImplementation(() => {return mockClient});
-        skyflow = Skyflow.init({
-          vaultID: '<VaultID>',
-          vaultURL: 'https://www.vaulturl.com',
-          getBearerToken: ()=>{
-            return new Promise((resolve,_)=>{
-                resolve("token")
-            })
-          }
-        });
+      clientModule.mockImplementation(() => { return mockClient });
+      skyflow = Skyflow.init({
+        vaultID: '<VaultID>',
+        vaultURL: 'https://www.vaulturl.com',
+        getBearerToken: () => {
+          return new Promise((resolve, _) => {
+            resolve("token")
+          })
+        }
+      });
       const res = skyflow.getById(getByIdInput);
       let data;
       res.then((res) => data = res);
@@ -518,27 +518,27 @@ describe('skyflow getById', () => {
     } catch (err) {
     }
   });
-  
+
 
   test('getById error', (done) => {
-   
+
     try {
       const clientReq = jest.fn(() => Promise.reject(getByIdError));
       const mockClient = {
         config: skyflowConfig,
         request: clientReq,
-        metadata:{}
+        metadata: {}
       }
-      clientModule.mockImplementation(() => {return mockClient});
-        skyflow = Skyflow.init({
-          vaultID: '<VaultID>',
-          vaultURL: 'https://www.vaulturl.com',
-          getBearerToken: ()=>{
-            return new Promise((resolve,_)=>{
-                resolve("token")
-            })
-          }
-        });
+      clientModule.mockImplementation(() => { return mockClient });
+      skyflow = Skyflow.init({
+        vaultID: '<VaultID>',
+        vaultURL: 'https://www.vaulturl.com',
+        getBearerToken: () => {
+          return new Promise((resolve, _) => {
+            resolve("token")
+          })
+        }
+      });
       const res = skyflow.getById(getByIdInput);
       let error;
       res.catch((err) => error = err);
@@ -550,50 +550,187 @@ describe('skyflow getById', () => {
     } catch (err) {
     }
   });
-  test('getById invalid input-1',(done)=>{
+  test('getById invalid input-1', (done) => {
     const res = skyflow.getById({});
-    res.catch((err)=>{
+    res.catch((err) => {
       expect(err).toBeDefined();
       done();
     });
   });
-  test('getById invalid input-2',(done)=>{
-    const res = skyflow.getById({"records":[]});
-    res.catch((err)=>{
+  test('getById invalid input-2', (done) => {
+    const res = skyflow.getById({ "records": [] });
+    res.catch((err) => {
       expect(err).toBeDefined();
       done();
     });
   });
-  test('getById invalid input-3',(done)=>{
-    const res = skyflow.getById({"records":[{}]});
-    res.catch((err)=>{
+  test('getById invalid input-3', (done) => {
+    const res = skyflow.getById({ "records": [{}] });
+    res.catch((err) => {
       expect(err).toBeDefined();
       done();
     });
   });
-  test('getById invalid input-4',(done)=>{
-    const res = skyflow.getById({"records":[{}]});
-    res.catch((err)=>{
+  test('getById invalid input-4', (done) => {
+    const res = skyflow.getById({ "records": [{}] });
+    res.catch((err) => {
       expect(err).toBeDefined();
       done();
     });
   });
 
-  test('getById invalid input-5',(done)=>{
+  test('getById invalid input-5', (done) => {
     const res = skyflow.getById(getByIdInputMissingIds);
-    res.catch((err)=>{
+    res.catch((err) => {
       expect(err).toBeDefined();
       done();
     });
   });
 
-  test('getById invalid input-6',(done)=>{
+  test('getById invalid input-6', (done) => {
     const res = skyflow.getById(getByIdInputInvalidRedaction);
-    res.catch((err)=>{
+    res.catch((err) => {
       expect(err).toBeDefined();
       done();
     });
   });
+});
+
+const deleteByIdInput = {
+  records: [{
+    ids: ['id'],
+    table: 'cards'
+  }],
+};
+
+const deleteByIdInputMissingIds = {
+  records: [{
+    table: 'cards'
+  }],
+};
+
+const deleteByIdRes = {
+  RecordIDResponse: ['id'],
+};
+
+const deleteByIdError = { error: { message: "id doesn't exist", code: 404 } };
+
+describe('skyflow deleteById', () => {
+
+  let skyflow;
+  beforeEach(() => {
+    skyflow = Skyflow.init({
+      vaultID: '<VaultID>',
+      vaultURL: 'https://www.vaulturl.com',
+      getBearerToken: jest.fn(),
+    });
+
+  });
+
+  test('deleteById success with valid bearer token', (done) => {
+    try {
+      jest.mock('../../src/vault-api/utils/jwtUtils', () => ({
+        __esModule: true,
+        isTokenValid: jest.fn(() => true),
+      }));
+      const clientReq = jest.fn(() => Promise.resolve(deleteByIdRes));
+      const mockClient = {
+        config: skyflowConfig,
+        request: clientReq,
+        metadata: {}
+      }
+      clientModule.mockImplementation(() => { return mockClient });
+      skyflow = Skyflow.init({
+        vaultID: '<VaultID>',
+        vaultURL: 'https://www.vaulturl.com',
+        getBearerToken: () => {
+          return new Promise((resolve, _) => {
+            resolve("token")
+          })
+        }
+      });
+      const res = skyflow.deleteById(deleteByIdInput);
+      let data;
+      res.then((res) => data = res);
+
+      setTimeout(() => {
+        expect(data.records.length).toBe(1);
+        expect(data.records[0].ids.length).toBe(1);
+        expect(data.error).toBeUndefined();
+        done();
+      }, 1000);
+    } catch (err) {
+    }
+  });
+
+
+  test('deleteById error', (done) => {
+
+    try {
+      const clientReq = jest.fn(() => Promise.reject(deleteByIdError));
+      const mockClient = {
+        config: skyflowConfig,
+        request: clientReq,
+        metadata: {}
+      }
+      clientModule.mockImplementation(() => { return mockClient });
+      skyflow = Skyflow.init({
+        vaultID: '<VaultID>',
+        vaultURL: 'https://www.vaulturl.com',
+        getBearerToken: () => {
+          return new Promise((resolve, _) => {
+            resolve("token")
+          })
+        }
+      });
+      const res = skyflow.deleteById(deleteByIdInput);
+      let error;
+      res.catch((err) => error = err);
+
+      setTimeout(() => {
+        expect(error).toBeDefined();
+        done();
+      }, 1000);
+    } catch (err) {
+    }
+  });
+  test('deleteById invalid input-1', (done) => {
+    const res = skyflow.deleteById({});
+    res.catch((err) => {
+      expect(err).toBeDefined();
+      done();
+    });
+  });
+  test('deleteById invalid input-2', (done) => {
+    const res = skyflow.deleteById({ "records": [] });
+    res.catch((err) => {
+      expect(err).toBeDefined();
+      done();
+    });
+  });
+  test('deleteById invalid input-3', (done) => {
+    const res = skyflow.deleteById({ "records": [{}] });
+    res.catch((err) => {
+      expect(err).toBeDefined();
+      done();
+    });
+  });
+  test('deleteById invalid input-4', (done) => {
+    const res = skyflow.deleteById({ "records": [{}] });
+    res.catch((err) => {
+      expect(err).toBeDefined();
+      done();
+    });
+  });
+
+  test('deleteById invalid input-5', (done) => {
+    const res = skyflow.deleteById(deleteByIdInputMissingIds);
+    res.catch((err) => {
+      expect(err).toBeDefined();
+      done();
+    });
+  });
+
 });
 
 const invokeConnectionReq = {
@@ -692,28 +829,28 @@ describe('skyflow invoke connection', () => {
 
   test('invoke connection success with valid bearer token', (done) => {
     try {
-      jest.mock('../../src/vault-api/utils/jwtUtils',()=>({
+      jest.mock('../../src/vault-api/utils/jwtUtils', () => ({
         __esModule: true,
-        isTokenValid:jest.fn(()=>true),
+        isTokenValid: jest.fn(() => true),
       }));
       const clientReq = jest.fn(() => Promise.resolve(invokeConnectionRes));
       const mockClient = {
         config: skyflowConfig,
         request: clientReq,
-        metadata:{}
+        metadata: {}
       }
-      clientModule.mockImplementation(() => {return mockClient});
+      clientModule.mockImplementation(() => { return mockClient });
       skyflow = Skyflow.init({
-          vaultID: '<VaultID>',
-          vaultURL: 'https://www.vaulturl.com',
-          getBearerToken: ()=>{
-            return new Promise((resolve,_)=>{
-                resolve("token")
-            })
-          }
-        });
+        vaultID: '<VaultID>',
+        vaultURL: 'https://www.vaulturl.com',
+        getBearerToken: () => {
+          return new Promise((resolve, _) => {
+            resolve("token")
+          })
+        }
+      });
       const res = skyflow.invokeConnection(invokeConnectionReq);
-      
+
       let data;
       res.then((res) => data = res);
 
@@ -727,88 +864,88 @@ describe('skyflow invoke connection', () => {
       console.log(err)
     }
   });
-  
-  test('invoke connection invalidInput -1 ',(done)=>{
+
+  test('invoke connection invalidInput -1 ', (done) => {
     try {
-      const res = skyflow.invokeConnection({connectionURL:"invalid_url"});
-      res.catch((err)=>{
+      const res = skyflow.invokeConnection({ connectionURL: "invalid_url" });
+      res.catch((err) => {
         expect(err).toBeDefined();
         done();
       })
-    }catch(err){
-  
+    } catch (err) {
+
     }
   });
-  test('invoke connection invalidInput -2 ',(done)=>{
-  try {
-    const res = skyflow.invokeConnection({connectionURL:"invalid_url"});
-    res.catch((err)=>{
-      expect(err).toBeDefined();
-      done();
-    })
-  }catch(err){
+  test('invoke connection invalidInput -2 ', (done) => {
+    try {
+      const res = skyflow.invokeConnection({ connectionURL: "invalid_url" });
+      res.catch((err) => {
+        expect(err).toBeDefined();
+        done();
+      })
+    } catch (err) {
 
-  }
+    }
   });
 
-  test('invoke connection invalidInput -3 ',(done)=>{
+  test('invoke connection invalidInput -3 ', (done) => {
     try {
       const res = skyflow.invokeConnection(invalidconnectionURL);
-      res.catch((err)=>{
+      res.catch((err) => {
         expect(err).toBeDefined();
         done();
       })
-    }catch(err){
-  
+    } catch (err) {
+
     }
-    });
-    test('invoke connection invalidInput -4 ',(done)=>{
-      try {
-        const res = skyflow.invokeConnection(missingconnectionURL);
-        res.catch((err)=>{
-          expect(err).toBeDefined();
-          done();
-        })
-      }catch(err){
-    
-      }
-      });
-      test('invoke connection invalidInput -5 ',(done)=>{
-        try {
-          const res = skyflow.invokeConnection(missingMethod);
-          res.catch((err)=>{
-            expect(err).toBeDefined();
-            done();
-          })
-        }catch(err){
-      
-        }
-        });
-        test('invoke connection invalidInput -6 ',(done)=>{
-          try {
-            const res = skyflow.invokeConnection(invalidMEthod);
-            res.catch((err)=>{
-              expect(err).toBeDefined();
-              done();
-            })
-          }catch(err){
-        
-          }
-          });
+  });
+  test('invoke connection invalidInput -4 ', (done) => {
+    try {
+      const res = skyflow.invokeConnection(missingconnectionURL);
+      res.catch((err) => {
+        expect(err).toBeDefined();
+        done();
+      })
+    } catch (err) {
+
+    }
+  });
+  test('invoke connection invalidInput -5 ', (done) => {
+    try {
+      const res = skyflow.invokeConnection(missingMethod);
+      res.catch((err) => {
+        expect(err).toBeDefined();
+        done();
+      })
+    } catch (err) {
+
+    }
+  });
+  test('invoke connection invalidInput -6 ', (done) => {
+    try {
+      const res = skyflow.invokeConnection(invalidMEthod);
+      res.catch((err) => {
+        expect(err).toBeDefined();
+        done();
+      })
+    } catch (err) {
+
+    }
+  });
 
 });
 
-describe("Skyflow Enums",()=>{
- 
+describe("Skyflow Enums", () => {
 
-  test("Skyflow.RedactionType",()=>{
-      expect(Skyflow.RedactionType.DEFAULT).toEqual(RedactionType.DEFAULT);
-      expect(Skyflow.RedactionType.MASKED).toEqual(RedactionType.MASKED);
-      expect(Skyflow.RedactionType.PLAIN_TEXT).toEqual(RedactionType.PLAIN_TEXT);
-      expect(Skyflow.RedactionType.REDACTED).toEqual(RedactionType.REDACTED);
+
+  test("Skyflow.RedactionType", () => {
+    expect(Skyflow.RedactionType.DEFAULT).toEqual(RedactionType.DEFAULT);
+    expect(Skyflow.RedactionType.MASKED).toEqual(RedactionType.MASKED);
+    expect(Skyflow.RedactionType.PLAIN_TEXT).toEqual(RedactionType.PLAIN_TEXT);
+    expect(Skyflow.RedactionType.REDACTED).toEqual(RedactionType.REDACTED);
   });
 
-  test("Skyflow.RequestMethod",()=>{
+  test("Skyflow.RequestMethod", () => {
     expect(Skyflow.RequestMethod.GET).toEqual(RequestMethod.GET);
     expect(Skyflow.RequestMethod.POST).toEqual(RequestMethod.POST);
     expect(Skyflow.RequestMethod.PUT).toEqual(RequestMethod.PUT);
@@ -816,12 +953,12 @@ describe("Skyflow Enums",()=>{
     expect(Skyflow.RequestMethod.PATCH).toEqual(RequestMethod.PATCH);
   });
 
-  test("isvalid url true",()=>{
-      expect(isValidURL("https://www.google.com")).toBe(true);
+  test("isvalid url true", () => {
+    expect(isValidURL("https://www.google.com")).toBe(true);
   })
 
 
-  test("invalid url true",()=>{
+  test("invalid url true", () => {
     expect(isValidURL("httpsww.google.com")).toBe(false);
 
   })

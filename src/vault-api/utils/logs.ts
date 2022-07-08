@@ -1,17 +1,18 @@
 /*
-	Copyright (c) 2022 Skyflow, Inc. 
+  Copyright (c) 2022 Skyflow, Inc. 
 */
 const logs = {
   infoLogs: {
-    EMPTY_BEARER_TOKEN : "BearerToken is Empty",
-    BEARER_TOKEN_EXPIRED : "BearerToken is expired",
-    GENERATE_BEARER_TOKEN_TRIGGERED : "generateBearerToken is triggered",
-    GENERATE_BEARER_TOKEN_SUCCESS : "BearerToken is generated",
+    EMPTY_BEARER_TOKEN: "BearerToken is Empty",
+    BEARER_TOKEN_EXPIRED: "BearerToken is expired",
+    GENERATE_BEARER_TOKEN_TRIGGERED: "generateBearerToken is triggered",
+    GENERATE_BEARER_TOKEN_SUCCESS: "BearerToken is generated",
     INITIALIZE_CLIENT: 'Initializing skyflow client.',
     CLIENT_INITIALIZED: 'Initialized skyflow client successfully.',
     VALIDATE_RECORDS: 'Validating insert records.',
     VALIDATE_DETOKENIZE_INPUT: 'Validating detokenize input.',
     VALIDATE_GET_BY_ID_INPUT: 'Validating getByID input.',
+    VALIDATE_DELETE_BY_ID_INPUT: 'Validating deleteByID input.',
     VALIDATE_CONNECTION_CONFIG: 'Validating connection config.',
     INSERT_DATA_SUCCESS: 'Data has been inserted successfully.',
     DETOKENIZE_SUCCESS: 'Data has been revealed successfully.',
@@ -23,11 +24,13 @@ const logs = {
     INSERT_TRIGGERED: 'Insert method triggered.',
     DETOKENIZE_TRIGGERED: 'Detokenize method triggered.',
     GET_BY_ID_TRIGGERED: 'Get by ID triggered.',
+    DELETE_BY_ID_TRIGGERED: 'Delete by ID triggered.',
     INVOKE_CONNECTION_TRIGGERED: 'Invoke connection triggered.',
     EMIT_REQUEST: 'Emitted %s1 request.',
     FETCH_RECORDS_RESOLVED: 'Detokenize request is resolved.',
     INSERT_RECORDS_RESOLVED: 'Insert request is resolved.',
     GET_BY_SKYFLOWID_RESOLVED: 'GetById request is resolved.',
+    DELETE_BY_SKYFLOWID_RESOLVED: 'DeleteById request is resolved.',
     SEND_INVOKE_CONNECTION_RESOLVED: 'Invoke connection request resolved.',
   },
   errorLogs: {
@@ -92,10 +95,10 @@ const logs = {
     ERROR_OCCURED: 'Error occurred.',
     RESPONSE_BODY_KEY_MISSING: '%s1 is missing in the response.',
   },
-warnLogs:{
-  GENERATE_BEARER_DEPRECATED: 'This method has been deprecated will be removed in future release, use GenerateBearerToken instead',
-  ISVALID_DEPRECATED: 'This method has been deprecated will be removed in future release, use isExpired instead'
-}
+  warnLogs: {
+    GENERATE_BEARER_DEPRECATED: 'This method has been deprecated will be removed in future release, use GenerateBearerToken instead',
+    ISVALID_DEPRECATED: 'This method has been deprecated will be removed in future release, use isExpired instead'
+  }
 };
 
 export default logs;
