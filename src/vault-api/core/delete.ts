@@ -6,15 +6,8 @@ export const deleteSkyflowIdRecordsFromVault = async (
   client: Client,
   authToken: string,
 ) => {
-  let paramList: string = '';
 
-  skyflowIdRecord.ids.forEach((skyflowId) => {
-    paramList += `skyflow_ids=${skyflowId}&`;
-  });
-
-  paramList = paramList.slice(0, -1);
-
-  const vaultEndPointurl: string = `${client.config.vaultURL}/v1/vaults/${client.config.vaultID}/${skyflowIdRecord.table}?${paramList}`;
+  const vaultEndPointurl: string = `${client.config.vaultURL}/v1/vaults/${client.config.vaultID}/${skyflowIdRecord.table}`;
 
   return client.request<{ RecordIDResponse: string[] }>({
     requestMethod: 'DELETE',
@@ -23,6 +16,9 @@ export const deleteSkyflowIdRecordsFromVault = async (
       Authorization: `Bearer ${authToken}`,
       'Content-Type': 'application/json',
     },
+    body: {
+      skyflow_ids: skyflowIdRecord.ids
+    }
   });
 }
 

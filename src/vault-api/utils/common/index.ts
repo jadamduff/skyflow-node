@@ -69,6 +69,25 @@ export interface ISkyflowIdRecordWithoutReveal {
   table: string;
 }
 
+export interface IUpdateRecord {
+  records: {
+    ID: string,
+    fields: Record<string, any>;
+  }[];
+  table: string;
+  tokenization: boolean;
+}
+
+export interface IUpdateRecordResponse {
+  records: {
+    skyflow_id: string,
+    createdTime: string,
+    updatedTime: string,
+    tokens?: Record<string, string>;
+  }[];
+  table: string;
+}
+
 export interface IDeleteByIdInput {
   records: ISkyflowIdRecordWithoutReveal[];
 }
